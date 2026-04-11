@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="home-box">
+
+<h2 style="font-size:30px; margin-bottom:25px; text-align:center;">
+    My Profile
+</h2>
+
+<div style="overflow-x:auto;">
+<table style="
+        width:100%;
+        max-width:850px;
+        margin:auto;
+        border-collapse:collapse;
+        background:white;
+        border-radius:8px;
+        overflow:hidden;
+        box-shadow:0 2px 10px rgba(0,0,0,0.08);
+    ">
+
+    <tbody>
+
+        <tr style="background:#f5f6fa;">
+            <td style="padding:12px 15px; width:35%; font-weight:600;">
+                Name
+            </td>
+            <td style="padding:12px 15px;">
+                {{ profile.name }}
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding:12px 15px; font-weight:600;">Email</td>
+            <td style="padding:12px 15px;">{{ request.user.email }}</td>
+        </tr>
+
+        <tr style="background:#f5f6fa;">
+            <td style="padding:12px 15px; font-weight:600;">Date of Birth</td>
+            <td style="padding:12px 15px;">{{ profile.dob }}</td>
+        </tr>
+
+        <tr>
+            <td style="padding:12px 15px; font-weight:600;">Gender</td>
+            <td style="padding:12px 15px;">{{ profile.gender }}</td>
+        </tr>
+
+        <tr style="background:#f5f6fa;">
+            <td style="padding:12px 15px; font-weight:600;">Mobile</td>
+            <td style="padding:12px 15px;">{{ profile.mobile }}</td>
+        </tr>
+
+        <tr>
+            <td style="padding:12px 15px; font-weight:600;">Aadhaar</td>
+            <td style="padding:12px 15px;">{{ profile.aadhaar }}</td>
+        </tr>
+
+        <tr style="background:#f5f6fa;">
+            <td style="padding:12px 15px; font-weight:600;">House Name / House.No</td>
+            <td style="padding:12px 15px;">{{ profile.house_name }}</td>
+        </tr>
+
+        <tr>
+            <td style="padding:12px 15px; font-weight:600;">Place</td>
+            <td style="padding:12px 15px;">{{ profile.place }}</td>
+        </tr>
+
+        <tr style="background:#f5f6fa;">
+            <td style="padding:12px 15px; font-weight:600;">District</td>
+            <td style="padding:12px 15px;">{{ profile.district }}</td>
+        </tr>
+
+        <tr>
+            <td style="padding:12px 15px; font-weight:600;">Pin Code</td>
+            <td style="padding:12px 15px;">{{ profile.pin_code }}</td>
+        </tr>
+
+        <tr style="background:#f5f6fa;">
+           <td style="padding:12px 15px; font-weight:600;">State</td>
+           <td style="padding:12px 15px;">{{ profile.state }}</td>
+        </tr>
+
+        <tr style="background:#f5f6fa;">
+            <td style="padding:12px 15px; font-weight:600;">Program</td>
+            <td style="padding:12px 15px;">{{ profile.program }}</td>
+        </tr>
+
+        <tr>
+            <td style="padding:12px 15px; font-weight:600;">Year</td>
+            <td style="padding:12px 15px;">{{ profile.year }}</td>
+        </tr>
+
+        <tr style="background:#f5f6fa;">
+            <td style="padding:12px 15px; font-weight:600;">Branch</td>
+            <td style="padding:12px 15px;">{{ profile.branch }}</td>
+        </tr>
+
+        <tr>
+            <td style="padding:12px 15px; font-weight:600;">Institution</td>
+            <td style="padding:12px 15px;">{{ profile.institution }}</td>
+        </tr>
+
+    </tbody>
+</table>
+</div>
+
+<br>
+
+<div style="text-align:center;">
+    <a href="{% url 'edit_profile' %}">
+        <button style="
+                padding:10px 25px;
+                font-size:15px;
+                border-radius:5px;
+            ">
+            Edit Profile
+        </button>
+    </a>
+</div>
+
+</div>
+
+{% endblock %}

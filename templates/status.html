@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="home-box">
+
+    <h2 style="text-align:center; margin-bottom:30px;">
+        Your Grievance Status
+    </h2>
+
+    <div style="overflow-x:auto;">
+        <table style="
+            width:100%;
+            border-collapse:collapse;
+            background-color:white;
+            border-radius:8px;
+            overflow:hidden;
+        ">
+
+            <thead>
+                <tr style="background-color:#2f3e63; color:white;">
+                    <th style="padding:12px;">Category</th>
+                    <th style="padding:12px;">Sub Category</th>
+                    <th style="padding:12px;">Description</th>
+                    <th style="padding:12px;">Votes</th>
+                    <th style="padding:12px;">Status</th>
+                    <th style="padding:12px;">Created On</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for grievance in grievances %}
+                <tr style="text-align:center; border-bottom:1px solid #ddd;">
+                    
+                    <td style="padding:12px;">
+                        {{ grievance.main_category }}
+                    </td>
+
+                    <td style="padding:12px;">
+                        {{ grievance.sub_category }}
+                    </td>
+
+                    <td style="
+                        padding:12px;
+                        text-align:left;
+                        max-width:300px;
+                        white-space:normal;
+                        word-wrap:break-word;
+                    ">
+                        {{ grievance.description|linebreaksbr }}
+                    </td>
+
+                    <td style="padding:12px; font-weight:600;">
+                        {{ grievance.votes }}
+                    </td>
+
+                    <td style="padding:12px;">
+                        {% if grievance.status == "Resolved" %}
+                            <span style="
+                                background:#d4edda;
+                                color:#155724;
+                                padding:5px 10px;
+                                border-radius:20px;
+                                font-size:14px;
+                                font-weight:600;
+                            ">
+                                Resolved
+                            </span>
+
+                        {% elif grievance.status == "In Progress" %}
+                            <span style="
+                                background:#cce5ff;
+                                color:#004085;
+                                padding:5px 10px;
+                                border-radius:20px;
+                                font-size:14px;
+                                font-weight:600;
+                            ">
+                                In Progress
+                            </span>
+
+                        {% else %}
+                            <span style="
+                                background:#fff3cd;
+                                color:#856404;
+                                padding:5px 10px;
+                                border-radius:20px;
+                                font-size:14px;
+                                font-weight:600;
+                            ">
+                                Pending
+                            </span>
+                        {% endif %}
+                    </td>
+
+                    <td style="padding:12px;">
+                        {{ grievance.created_at|date:"d-m-Y" }}
+                    </td>
+
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="padding:20px; text-align:center;">
+                        No grievances submitted yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+
+</div>
+
+{% endblock %}

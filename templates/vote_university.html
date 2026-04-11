@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="home-box">
+
+<h2 style="font-size: 35px; margin-bottom: 30px;">
+    All University Grievances
+</h2>
+
+{% if grievances %}
+<table style="width:100%; border-collapse:collapse; background:white; border-radius:8px; overflow:hidden;">
+
+    <thead style="background-color:#2f3e63; color:white;">
+        <tr>
+            <th style="padding:12px;">Category</th>
+            <th style="padding:12px;">Sub Category</th>
+            <th style="padding: 12px;">Description</th>
+            <th style="padding:12px;">Votes</th>
+            <th style="padding:12px;">Status</th>
+            <th style="padding:12px;">Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for grievance in grievances %}
+        <tr style="text-align:center; border-bottom:1px solid #ddd;">
+
+            <td style="padding:10px;">{{ grievance.main_category }}</td>
+            <td style="padding:10px;">{{ grievance.sub_category }}</td>
+            <td style="padding: 12px; max-width: 250px; word-wrap: break-word;">{{ grievance.description }}</td>
+
+
+            <td style="padding:10px; font-weight:bold;"
+                id="vote-count-{{ grievance.id }}">
+                {{ grievance.votes }}
+            </td>
+
+            <td style="padding:10px;">
+                <span style="background:#f4d7a1; padding:5px 10px; border-radius:15px;">
+                    {{ grievance.status }}
+                </span>
+            </td>
+
+            <td style="padding:10px;">
+
+                {% if grievance.status == "Resolved" %}
+                    <span style="color:green; font-weight:bold;">
+                        Resolved
+                    </span>
+
+                {% elif grievance.id in voted_ids %}
+                    <button disabled
+                            style="padding:6px 15px;
+                                   font-size:14px;
+                                   border-radius:6px;
+                                   background-color:gray;
+                                   color:white;">
+                        Voted
+                    </button>
+
+                {% else %}
+                    <button type="button"
+                            class="vote-btn"
+                            data-id="{{ grievance.id }}"
+                            style="padding:6px 15px;
+                                   font-size:14px;
+                                   border-radius:6px;">
+                        Vote
+                    </button>
+                {% endif %}
+
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
+{% else %}
+<p>No grievances available.</p>
+{% endif %}
+
+</div>
+
+<script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+const csrftoken = getCookie('csrftoken');
+
+document.querySelectorAll(".vote-btn").forEach(button => {
+    button.addEventListener("click", function () {
+
+        const grievanceId = this.dataset.id;
+        const btn = this;
+
+        fetch(`/vote/${grievanceId}/`, {
+            method: "POST",
+            credentials: "same-origin",
+            headers: {
+                "X-CSRFToken": csrftoken
+            }
+        })
+        .then(response => response.json().then(data => ({ ok: response.ok, data })))
+        .then(data => {
+            if (!data.ok) {
+                alert(data.data.error || "Unable to vote right now.");
+                return;
+            }
+            if (data.data.status === "voted" || data.data.status === "already_voted") {
+
+                btn.innerText = "Voted";
+                btn.disabled = true;
+                btn.style.backgroundColor = "gray";
+                btn.style.color = "white";
+
+                document.getElementById("vote-count-" + grievanceId)
+                        .innerText = data.data.votes;
+            }
+        })
+        .catch(() => {
+            alert("Unable to vote right now.");
+        });
+    });
+});
+</script>
+
+{% endblock %}

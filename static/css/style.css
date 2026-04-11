@@ -1,0 +1,279 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+/* ================= NAVBAR ================= */
+.navbar {
+    background-color: #2a375a;
+    color: rgb(219, 208, 186);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 50px 40px;
+}
+
+.nav-left {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.nav-right a {
+    margin-left: 25px;
+    color: rgb(219, 208, 186);
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.nav-right a:hover {
+    text-decoration: underline;
+}
+
+/* ================= CENTER CONTENT ================= */
+.container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding-top: 80px;
+}
+
+/* Center Box */
+.home-box {
+    text-align: center;
+    background-color: rgb(219, 208, 186);
+    padding: 130px;
+    width: 1300px;
+    border-radius: 8px;
+    box-shadow: 0px 5px 15px rgba(0,0,0,0.1);
+}
+
+/* Buttons */
+button {
+    padding: 25px 40px;
+    background-color: #2a375a;
+    color: rgb(219, 208, 186);
+    border: none;
+    cursor: pointer;
+    margin: 50px;
+    font-size: 30px;
+    border-radius: 10px;
+}
+
+button:hover {
+    background-color: #1f2a44;
+}
+
+
+/* CENTER FORM */
+.container {
+    display: flex;
+    justify-content: center;
+    padding-top: 60px;
+}
+
+/* FORM CARD */
+.form-box {
+    background-color: white;
+    width: 650px;
+    padding: 50px;
+    border-radius: 10px;
+    box-shadow: 0px 5px 20px rgba(0,0,0,0.1);
+}
+
+/* Registration Submit Button Only */
+.register-btn {
+    width: auto;
+    padding: 12px 40px;
+    font-size: 18px;
+    background-color: #2a375a;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    display: block;
+    margin: 30px auto 0 auto;
+}
+
+.register-btn:hover {
+    background-color: #1f2a44;
+}
+
+
+/* Inputs */
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Headings spacing */
+h2 {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+
+h3 {
+    margin-top: 25px;
+    margin-bottom: 10px;
+}
+
+/* Error message */
+.error-msg {
+    color: red;
+    text-align: center;
+    margin-bottom: 15px;
+}
+/*
+/* Button 
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #2a375a;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #1f2a44;
+}
+*/
+/* Checkbox */
+.checkbox-row {
+    display: flex;
+    align-items: center;
+    margin: 15px 0;
+}
+
+.checkbox-row input {
+    margin-right: 10px;
+    width: auto;
+}
+
+.button-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    margin-top: 30px;
+    flex-wrap: nowrap;   /* ✅ prevents button from going to next line */
+}
+
+
+.login-title {
+    font-size: 40px;
+    margin-bottom: 20px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-input {
+    width: 300px;          /* Reduced width */
+    height: 38px;          /* Reduced height */
+    padding: 6px 10px;
+    margin: 10px 0;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.forgot-link {
+    margin: 8px 0;
+    font-size: 14px;
+}
+
+.homee-box {
+    display: flex;
+    background-color: rgb(219, 208, 186);
+    padding: 130px;
+    width: 1300px;
+    border-radius: 8px;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+}
+
+.login-card {
+    width: 350px;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+/* PASSWORD RULES */
+
+.password-rules{
+    margin-top:6px;
+    font-size:13px;
+    text-align:left;
+}
+
+.password-rules p{
+    margin:3px 0;
+    color:#d32f2f;
+}
+
+.password-rules p.valid{
+    color:#2e7d32;
+    font-weight:500;
+}
+
+
+.logout-modal{
+    display:none;   /* keep it hidden initially */
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.45);
+    backdrop-filter: blur(4px);
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
+
+.logout-box{
+    background:white;
+    padding:35px;
+    border-radius:10px;
+    width:360px;
+    text-align:center;
+    box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+
+.logout-buttons{
+    margin-top:20px;
+    display:flex;
+    justify-content:center;
+    gap:15px;
+}
+
+.logout-box button{
+    margin:0;
+    padding:10px 20px;
+    font-size:16px;
+}
+
+
+.valid{
+color:green;
+font-weight:600;
+}

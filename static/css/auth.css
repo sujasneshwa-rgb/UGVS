@@ -1,0 +1,45 @@
+/* Message alert box */
+
+.alert-box{
+    padding:10px;
+    margin:10px 0;
+    border-radius:5px;
+}
+
+.alert-box.error{
+    background:#f8d7da;
+    color:#721c24;
+}
+
+.alert-box.success{
+    background:#d4edda;
+    color:#155724;
+}
+
+.alert-box.warning{
+    background:#fff3cd;
+    color:#856404;
+}
+
+/* OTP warning box */
+
+.otp-fallback{
+    background:#fff3cd;
+    border:2px solid #ffc107;
+    border-radius:5px;
+    padding:15px;
+    margin:20px 0;
+    color:#856404;
+    font-weight:bold;
+}
+
+.otp-number{
+    font-size:24px;
+    color:#d32f2f;
+    letter-spacing:3px;
+}
+
+.center-text{
+    text-align:center;
+    margin-top:20px;
+}

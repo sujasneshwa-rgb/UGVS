@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="home-box">
+
+<h2 style="font-size:40px;">Add Grievance ({{ level|title }})</h2>
+
+<form method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+
+<select id="main_category" name="main_category" required>
+<option value="">Main Category</option>
+
+{% if level == "college" %}
+<option value="academic">Academic</option>
+<option value="infrastructure">Infrastructure</option>
+<option value="hostel">Hostel</option>
+<option value="faculty">Faculty</option>
+<option value="fees">Fees and Payment</option>
+<option value="administration">Administration</option>
+<option value="ragging">Ragging</option>
+<option value="other">Other</option>
+{% else %}
+<option value="exam">University Exam</option>
+<option value="result">Result Issues</option>
+<option value="certificate">Certificates</option>
+<option value="portal">Student Portal</option>
+<option value="affiliation">College Affiliation</option>
+<option value="scholarship">Scholarship</option>
+<option value="administration">University Administration</option>
+<option value="other">Other</option>
+
+{% endif %}
+
+</select>
+
+<select id="sub_category" name="sub_category" required>
+<option value="">Sub Category</option>
+</select>
+
+
+<textarea id="description" name="description" maxlength="300" rows="4"
+placeholder="Describe your issue" required
+style="width:100%; padding:10px;"></textarea>
+
+<p id="charCounter" style="font-size:14px; color:#555; text-align:left; margin-top:5px;">
+300 characters
+</p>
+<input type="file" name="evidence">
+
+<button type="submit">Submit</button>
+
+</form>
+</div>
+
+<script>
+
+const subCategories = {
+
+academic: [
+"Teaching Quality",
+"Internal Marks Issue",
+"Attendance Issue",
+"Assignment Evaluation",
+"Faculty Behaviour",
+"Other"
+],
+
+infrastructure: [
+"Classroom Facilities",
+"Lab Equipment",
+"Library Issues",
+"WiFi Problem",
+"Maintenance",
+"Other"
+],
+
+hostel: [
+"Room Maintenance",
+"Water Issue",
+"Electricity Problem",
+"Mess Food Quality",
+"Hostel Rules",
+"Other"
+],
+
+faculty: [
+"Unprofessional Behaviour",
+"Discrimination",
+"Harassment",
+"Bias in Marks",
+"Other"
+],
+
+fees: [
+"Extra Fees Charged",
+"Payment Error",
+"Refund Delay",
+"Scholarship Delay",
+"Other"
+],
+
+administration: [
+"Certificate Delay",
+"ID Card Issue",
+"Office Staff Behaviour",
+"Document Processing Delay",
+"Other"
+],
+
+ragging: [
+"Senior Harassment",
+"Bullying",
+"Threatening Behaviour",
+"Other"
+],
+
+exam: [
+"Exam Registration Problem",
+"Hall Ticket Issue",
+"Exam Center Problem",
+"Exam Schedule Clash",
+"Other"
+],
+
+result: [
+"Result Delay",
+"Incorrect Marks",
+"Revaluation Issue",
+"Grade Card Error",
+"Other"
+],
+
+certificate: [
+"Degree Certificate Delay",
+"Provisional Certificate",
+"Migration Certificate",
+"Duplicate Certificate",
+"Other"
+],
+
+portal: [
+"Login Problem",
+"Details Not Updated",
+"Marks Not Visible",
+"Payment Not Reflected",
+"Other"
+],
+
+affiliation: [
+"College Not Following Rules",
+"Internal Marks Upload Delay",
+"Academic Compliance Issue",
+"Other"
+],
+
+scholarship: [
+"Scholarship Not Received",
+"Approval Delay",
+"Eligibility Issue",
+"Other"
+]
+
+};
+
+document.getElementById("main_category").addEventListener("change", function(){
+
+const subSelect = document.getElementById("sub_category");
+subSelect.innerHTML = "<option value=''>Sub Category</option>";
+
+let selected = this.value;
+
+if(subCategories[selected]){
+
+subCategories[selected].forEach(function(sub){
+
+let option = document.createElement("option");
+option.value = sub;
+option.text = sub;
+subSelect.appendChild(option);
+
+});
+
+}
+
+});
+
+
+const textarea = document.getElementById("description");
+const counter = document.getElementById("charCounter");
+
+textarea.addEventListener("input", function() {
+    const remaining = 300 - textarea.value.length;
+    counter.textContent = remaining + " characters";
+
+    if (remaining <= 50) {
+        counter.style.color = "red";
+    } else {
+        counter.style.color = "#555";
+    }
+});
+
+</script>
+
+{% endblock %}

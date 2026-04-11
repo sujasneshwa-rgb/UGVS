@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="form-box">
+
+<h2 class="form-title">Feedback</h2>
+
+
+
+<form method="POST">
+{% csrf_token %}
+
+<input type="text" name="name" placeholder="Your Name" required>
+
+<input type="email" name="email" placeholder="Your Email" required>
+
+<textarea name="message" placeholder="Write your feedback..." required></textarea>
+
+<button type="submit" class="register-btn">Submit</button>
+
+</form>
+
+</div>
+
+{% endblock %}

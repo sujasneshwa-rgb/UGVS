@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="home-box">
+
+<h2 style="font-size: 35px; margin-bottom: 30px;">
+    Resolved University Grievances
+</h2>
+
+{% if grievances %}
+<div style="overflow-x:auto;">
+<table style="width:100%; border-collapse:collapse; background-color:white; border-radius:8px; overflow:hidden;">
+
+    <thead style="background-color: #2f3e63; color: white;">
+        <tr>
+            <th style="padding: 12px;">Category</th>
+            <th style="padding: 12px;">Sub Category</th>
+            <th style="padding: 12px;">Description</th>
+            <th style="padding: 12px;">Votes</th>
+            <th style="padding: 12px;">Status</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for grievance in grievances %}
+        <tr style="text-align:center; border-bottom:1px solid #ddd;">
+
+            <td style="padding:12px;">{{ grievance.main_category }}</td>
+            <td style="padding:12px;">{{ grievance.sub_category }}</td>
+
+            <td style="padding:12px; max-width:250px; word-wrap:break-word;">
+                {{ grievance.description }}
+            </td>
+
+            <td style="padding:12px; font-weight:600;">
+                {{ grievance.votes }}
+            </td>
+
+            <td style="padding:12px;">
+                <span style="background:#c8e6c9; padding:5px 10px; border-radius:15px;">
+                    Resolved
+                </span>
+            </td>
+
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
+</div>
+
+{% else %}
+<p>No resolved grievances available.</p>
+{% endif %}
+
+</div>
+{% endblock %}

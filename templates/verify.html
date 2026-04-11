@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="home-box" style="
+    max-width:520px;
+    margin:40px auto;
+    padding:30px 40px;
+">
+<h2 class="form-title">Email Verification</h2>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert-box {{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+{% if show_otp %}
+<div class="otp-fallback">
+    Email could not be sent. Your OTP is:
+    <div class="otp-number">
+        {{ session_otp|default:"------" }}
+    </div>
+    <p>Please enter this OTP below to verify your account.</p>
+</div>
+{% else %}
+<p style="margin:20px 0;color:#666;">
+    We sent a 6-digit OTP to <strong>{{ email|default:"your email" }}</strong><br>
+    Please enter the OTP below to verify your account.
+</p>
+{% endif %}
+
+<!-- ⏱ TIMER -->
+<p style="text-align:center;font-weight:bold;margin-bottom:15px;color:#d32f2f;">
+    OTP expires in <span id="timer">60</span> seconds
+</p>
+
+<form method="POST">
+{% csrf_token %}
+
+<input type="text"
+       name="otp"
+       id="otp"
+       placeholder="Enter 6-digit OTP"
+       maxlength="6"
+       pattern="[0-9]{6}"
+       required autofocus
+       style="width:100%;padding:12px;margin:10px 0;font-size:18px;text-align:center;letter-spacing:5px;">
+
+<button type="submit" class="register-btn" style="width:100%;margin-top:10px;">
+    Verify Email
+</button>
+
+</form>
+
+<div class="center-text">
+    <p style="color:#666;">Didn't receive the OTP?</p>
+    <a href="{% url 'resend_otp' user_id|default:0 %}">
+        Resend OTP
+    </a>
+</div>
+
+<div class="center-text">
+    <a href="{% url 'login' %}">Back to Login</a>
+</div>
+
+</div>
+
+<script>
+document.getElementById("otp").addEventListener("input", function() {
+    this.value = this.value.replace(/\D/g, '');
+});
+// ⏱ countdown timer
+// allow only digits in OTP
+document.getElementById("otp").addEventListener("input", function() {
+    this.value = this.value.replace(/\D/g, '');
+});
+
+// countdown timer with expiry message
+let timeLeft = 60;
+const timer = document.getElementById("timer");
+
+if (timer) {
+    const countdown = setInterval(() => {
+        timeLeft--;
+
+        if (timeLeft > 0) {
+            timer.innerText = timeLeft;
+        } 
+        else {
+            clearInterval(countdown);
+
+            // change red text on page
+            timer.parentElement.innerHTML = "OTP expired. Please resend OTP.";
+
+            // disable input & button
+            document.getElementById("otp").disabled = true;
+            document.querySelector("button[type='submit']").disabled = true;
+
+           
+        }
+
+    }, 1000);
+}
+</script>
+
+{% endblock %}

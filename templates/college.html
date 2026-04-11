@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="home-box">
+
+<h2 style="font-size: 40px;">College Level</h2>
+
+<div class="button-row">
+    <a href="/add-grievance/college/">
+        <button>Add New Grievance</button>
+    </a>
+
+    <a href="/status/college/">
+        <button>View My Grievance Status</button>
+    </a>
+</div>
+
+<div class="button-row">
+    <a href="{% url 'vote_college' %}">
+        <button>Vote on Grievances</button>
+    </a>
+
+    <!-- NEW BUTTON -->
+    <a href="/resolved/college/">
+        <button>Resolved Grievances</button>
+    </a>
+</div>
+
+</div>
+{% endblock %}

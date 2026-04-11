@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="home-box">
+    <h2 style="font-size: 35px; margin-bottom: 20px;">Admin Grievances</h2>
+
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'admin_grievances' %}">
+            <button>Pending / In Progress</button>
+        </a>
+        <a href="{% url 'admin_resolved_grievances' %}">
+            <button>Resolved Grievances</button>
+        </a>
+        <a href="{% url 'admin_rejected_grievances' %}">
+            <button>Rejected Grievances</button>
+        </a>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p style="margin: 8px 0; color: {% if message.tags == 'error' %}#c0392b{% else %}#1e7e34{% endif %}; font-weight: 600;">
+                {{ message }}
+            </p>
+        {% endfor %}
+    {% endif %}
+
+    {% if grievances %}
+    <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; background:white; border-radius:8px; overflow:hidden;">
+            <thead style="background-color:#2f3e63; color:white;">
+                <tr>
+                    <th style="padding:12px;">Title</th>
+                    <th style="padding:12px;">User</th>
+                    <th style="padding:12px;">Votes</th>
+                    <th style="padding:12px;">Priority</th>
+                    <th style="padding:12px;">Status</th>
+                    <th style="padding:12px;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for g in grievances %}
+                <tr style="text-align:center; border-bottom:1px solid #ddd;">
+                    <td style="padding:10px;">{{ g.main_category }} - {{ g.sub_category }}</td>
+                    <td style="padding:10px;">{{ g.student.email }}</td>
+                    <td style="padding:10px;">{{ g.votes }}</td>
+                    <td style="padding:10px;">
+                        {% if highest_vote and g.votes == highest_vote and g.votes != 0 %}
+                            <span style="color:red; font-weight:bold;">High</span>
+                        {% else %}
+                            Normal
+                        {% endif %}
+                    </td>
+                    <td style="padding:10px;">{{ g.status }}</td>
+                    <td style="padding:10px;">
+                        {% if g.status == "Pending" %}
+                            <a href="{% url 'update_status' g.id 'In Progress' %}"><button>Mark In Progress</button></a>
+                            <a href="{% url 'update_status' g.id 'Resolved' %}"><button>Resolve</button></a>
+                            <a href="{% url 'update_status' g.id 'Rejected' %}"><button>Reject</button></a>
+                        {% elif g.status == "In Progress" %}
+                            <a href="{% url 'update_status' g.id 'Resolved' %}"><button>Resolve</button></a>
+                            <a href="{% url 'update_status' g.id 'Rejected' %}"><button>Reject</button></a>
+                        {% elif g.status == "Rejected" %}
+                            <span>-</span>
+                        {% else %}
+                            <span>-</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p>No grievances available.</p>
+    {% endif %}
+</div>
+{% endblock %}

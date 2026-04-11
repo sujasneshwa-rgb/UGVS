@@ -1,0 +1,271 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="home-box">
+
+<h2 class="form-title">Edit Profile</h2>
+
+<form method="POST">
+{% csrf_token %}
+
+<h3>PERSONAL DETAILS</h3>
+
+<input type="text" name="name" value="{{ profile.name }}" required>
+
+<input type="email" value="{{ request.user.email }}" disabled>
+
+<input type="date" name="dob" value="{{ profile.dob|date:'Y-m-d' }}" required>
+
+<select name="gender" required>
+    <option value="">Gender</option>
+    <option value="Male" {% if profile.gender == "Male" %}selected{% endif %}>Male</option>
+    <option value="Female" {% if profile.gender == "Female" %}selected{% endif %}>Female</option>
+    <option value="Other" {% if profile.gender == "Other" %}selected{% endif %}>Other</option>
+</select>
+
+<input type="text" name="mobile" value="{{ profile.mobile }}" required>
+<input type="text" name="aadhaar" value="{{ profile.aadhaar }}" required>
+
+<textarea name="house_name" placeholder="House Name / House No" required>{{ profile.house_name }}</textarea>
+<input type="text" id="pin_code" name="pin_code" value="{{ profile.pin_code }}" placeholder="Pin Code" required maxlength="6">
+<input type="text" id="place" name="place" value="{{ profile.place }}" placeholder="Place" readonly>
+<input type="text" id="district" name="district" value="{{ profile.district }}" placeholder="District" readonly>
+<input type="text" id="state" name="state" value="{{ profile.state }}" placeholder="State" readonly>
+<h3>COURSE DETAILS</h3>
+
+<select name="program" required>
+    <option value="">Stream</option>
+    <option value="BTech" {% if profile.program == "BTech" %}selected{% endif %}>BTech</option>
+    <option value="MTech" {% if profile.program == "MTech" %}selected{% endif %}>MTech</option>
+    <option value="MCA" {% if profile.program == "MCA" %}selected{% endif %}>MCA</option>
+    <option value="BCA" {% if profile.program == "BCA" %}selected{% endif %}>BCA</option>
+    <option value="BArch" {% if profile.program == "BArch" %}selected{% endif %}>BArch</option>
+</select>
+
+<select name="year" required>
+    <option value="">Year</option>
+    <option value="1" {% if profile.year == "1" %}selected{% endif %}>1</option>
+    <option value="2" {% if profile.year == "2" %}selected{% endif %}>2</option>
+    <option value="3" {% if profile.year == "3" %}selected{% endif %}>3</option>
+    <option value="4" {% if profile.year == "4" %}selected{% endif %}>4</option>
+</select>
+
+<select name="branch" required>
+    <option value="">Branch</option>
+    <option value="CSE" {% if profile.branch == "CSE" %}selected{% endif %}>CSE</option>
+    <option value="ECE" {% if profile.branch == "ECE" %}selected{% endif %}>ECE</option>
+    <option value="EEE" {% if profile.branch == "EEE" %}selected{% endif %}>EEE</option>
+    <option value="CE" {% if profile.branch == "CE" %}selected{% endif %}>CE</option>
+    <option value="MECH" {% if profile.branch == "MECH" %}selected{% endif %}>MECH</option>
+    <option value="IT" {% if profile.branch == "IT" %}selected{% endif %}>IT</option>
+</select>
+
+<h3>COLLEGE NAME</h3>
+
+<select name="institution" required>
+    <option value="">Select College</option>
+    <option value="LBS College of Engineering, Kasaragod" {% if profile.institution == "LBS College of Engineering, Kasaragod" %}selected{% endif %}>LBS College of Engineering, Kasaragod</option>
+    <option value="College of Engineering, Trivandrum" {% if profile.institution == "College of Engineering, Trivandrum" %}selected{% endif %}>College of Engineering, Trivandrum</option>
+    <option value="College of Engineering, Adoor" {% if profile.institution == "College of Engineering, Adoor" %}selected{% endif %}>College of Engineering, Adoor</option>
+    <option value="Government Engineering College, Kannur" {% if profile.institution == "Government Engineering College, Kannur" %}selected{% endif %}>Government Engineering College, Kannur</option>
+    <option value="NSS College of Engineering, Palakkad" {% if profile.institution == "NSS College of Engineering, Palakkad" %}selected{% endif %}>NSS College of Engineering, Palakkad</option>
+    <option value="Amal Jyothi College of Engineering, Kanjirappally" {% if profile.institution == "Amal Jyothi College of Engineering, Kanjirappally" %}selected{% endif %}>Amal Jyothi College of Engineering, Kanjirappally</option>
+    <option value="MES College of Engineering, Kuttippuram" {% if profile.institution == "MES College of Engineering, Kuttippuram" %}selected{% endif %}>MES College of Engineering, Kuttippuram</option>
+    <option value="TKM College of Engineering, Kollam" {% if profile.institution == "TKM College of Engineering, Kollam" %}selected{% endif %}>TKM College of Engineering, Kollam</option>
+    <option value="Mar Athanasius College of Engineering, Kothamangalam" {% if profile.institution == "Mar Athanasius College of Engineering, Kothamangalam" %}selected{% endif %}>Mar Athanasius College of Engineering, Kothamangalam</option>
+    <option value="Government Engineering College, Thrissur" {% if profile.institution == "Government Engineering College, Thrissur" %}selected{% endif %}>Government Engineering College, Thrissur</option>
+</select>
+
+<br><br>
+
+<button type="submit" class="register-btn">
+    Update Profile
+</button>
+
+</form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Helper function to hide server-side errors when user starts typing
+    function hideServerError(fieldId) {
+        const serverError = document.getElementById(fieldId + '-server');
+        if (serverError) {
+            serverError.classList.remove('show');
+        }
+    }
+    
+    // Mobile number validation
+    const mobileInput = document.getElementById('mobile');
+    const mobileError = document.getElementById('mobile-error');
+    
+    function validateMobile() {
+        const value = mobileInput.value.trim();
+        if (value && (!/^\d{10}$/.test(value))) {
+            mobileError.textContent = 'Mobile number must be exactly 10 digits';
+            mobileError.classList.add('show');
+            mobileInput.classList.add('error');
+            return false;
+        } else {
+            mobileError.classList.remove('show');
+            mobileInput.classList.remove('error');
+            hideServerError('mobile-error');
+            return true;
+        }
+    }
+    
+    mobileInput.addEventListener('blur', validateMobile);
+    mobileInput.addEventListener('input', function() {
+        // Only allow digits
+        this.value = this.value.replace(/\D/g, '');
+        // Clear error immediately when user corrects it
+        if (this.classList.contains('error')) {
+            validateMobile();
+        }
+        hideServerError('mobile-error');
+    });
+    
+    // Aadhaar number validation
+    const aadhaarInput = document.getElementById('aadhaar');
+    const aadhaarError = document.getElementById('aadhaar-error');
+    
+    function validateAadhaar() {
+        const value = aadhaarInput.value.trim();
+        if (value && (!/^\d{12}$/.test(value))) {
+            aadhaarError.textContent = 'Aadhaar number must be exactly 12 digits';
+            aadhaarError.classList.add('show');
+            aadhaarInput.classList.add('error');
+            return false;
+        } else {
+            aadhaarError.classList.remove('show');
+            aadhaarInput.classList.remove('error');
+            hideServerError('aadhaar-error');
+            return true;
+        }
+    }
+    
+    aadhaarInput.addEventListener('blur', validateAadhaar);
+    aadhaarInput.addEventListener('input', function() {
+        // Only allow digits
+        this.value = this.value.replace(/\D/g, '');
+        // Clear error immediately when user corrects it
+        if (this.classList.contains('error')) {
+            validateAadhaar();
+        }
+        hideServerError('aadhaar-error');
+    });
+    
+    // Password confirmation validation
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirm_password');
+    const confirmPasswordError = document.getElementById('confirm_password-error');
+    
+    function validatePasswordMatch() {
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+        
+        if (confirmPassword && password !== confirmPassword) {
+            confirmPasswordError.textContent = 'Passwords do not match';
+            confirmPasswordError.classList.add('show');
+            confirmPasswordInput.classList.add('error');
+            return false;
+        } else {
+            confirmPasswordError.classList.remove('show');
+            confirmPasswordInput.classList.remove('error');
+            hideServerError('confirm_password-error');
+            return true;
+        }
+    }
+    
+    confirmPasswordInput.addEventListener('blur', validatePasswordMatch);
+    confirmPasswordInput.addEventListener('input', function() {
+        // Clear error immediately when user corrects it
+        if (this.classList.contains('error')) {
+            validatePasswordMatch();
+        }
+        hideServerError('confirm_password-error');
+    });
+    
+    passwordInput.addEventListener('blur', function() {
+        if (confirmPasswordInput.value) {
+            validatePasswordMatch();
+        }
+    });
+    
+    passwordInput.addEventListener('input', function() {
+        if (confirmPasswordInput.value && confirmPasswordInput.classList.contains('error')) {
+            validatePasswordMatch();
+        }
+        hideServerError('password-error');
+    });
+    
+    // Email validation (basic)
+    const emailInput = document.getElementById('email');
+    const emailError = document.getElementById('email-error');
+    
+    function validateEmail() {
+        const value = emailInput.value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (value && !emailRegex.test(value)) {
+            emailError.textContent = 'Please enter a valid email address';
+            emailError.classList.add('show');
+            emailInput.classList.add('error');
+            return false;
+        } else {
+            emailError.classList.remove('show');
+            emailInput.classList.remove('error');
+            hideServerError('email-error');
+            return true;
+        }
+    }
+    
+    emailInput.addEventListener('blur', validateEmail);
+    emailInput.addEventListener('input', function() {
+        // Clear error immediately when user corrects it
+        if (this.classList.contains('error')) {
+            validateEmail();
+        }
+        hideServerError('email-error');
+    });
+});
+</script>
+
+<script>
+
+const pincodeInput = document.getElementById("pin_code");
+
+pincodeInput.addEventListener("blur", function(){
+
+let pincode = this.value;
+
+if(pincode.length === 6){
+
+fetch("https://api.postalpincode.in/pincode/" + pincode)
+
+.then(response => response.json())
+
+.then(data => {
+
+if(data[0].Status === "Success"){
+
+let postOffice = data[0].PostOffice[0];
+
+document.getElementById("place").value = postOffice.Name;
+document.getElementById("district").value = postOffice.District;
+document.getElementById("state").value = postOffice.State;
+
+}else{
+
+alert("Invalid PIN Code");
+
+}
+
+});
+
+}
+
+});
+
+</script>
+
+{% endblock %}

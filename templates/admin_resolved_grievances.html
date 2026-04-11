@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="home-box">
+    <h2 style="font-size: 35px; margin-bottom: 20px;">Resolved Grievances</h2>
+
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'admin_grievances' %}">
+            <button>Pending / In Progress</button>
+        </a>
+        <a href="{% url 'admin_resolved_grievances' %}">
+            <button>Resolved Grievances</button>
+        </a>
+        <a href="{% url 'admin_rejected_grievances' %}">
+            <button>Rejected Grievances</button>
+        </a>
+    </div>
+
+    {% if grievances %}
+    <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; background:white; border-radius:8px; overflow:hidden;">
+            <thead style="background-color:#2f3e63; color:white;">
+                <tr>
+                    <th style="padding:12px;">Title</th>
+                    <th style="padding:12px;">User</th>
+                    <th style="padding:12px;">Level</th>
+                    <th style="padding:12px;">Institution</th>
+                    <th style="padding:12px;">Votes</th>
+                    <th style="padding:12px;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for g in grievances %}
+                <tr style="text-align:center; border-bottom:1px solid #ddd;">
+                    <td style="padding:10px;">{{ g.main_category }} - {{ g.sub_category }}</td>
+                    <td style="padding:10px;">{{ g.student.email }}</td>
+                    <td style="padding:10px;">{{ g.level|title }}</td>
+                    <td style="padding:10px;">{{ g.institution }}</td>
+                    <td style="padding:10px;">{{ g.votes }}</td>
+                    <td style="padding:10px; color:#1e7e34; font-weight:600;">{{ g.status }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p>No resolved grievances yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

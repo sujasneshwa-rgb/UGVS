@@ -1,0 +1,1095 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+.field-wrapper {
+    margin-bottom: 5px;
+}
+.error-message {
+    color: #d32f2f;
+    font-size: 12px;
+    margin-top: 2px;
+    margin-bottom: 10px;
+    padding-left: 5px;
+    display: none;
+    text-align: left;
+}
+.error-message.show {
+    display: block;
+}
+input.error, select.error, textarea.error {
+    border-color: #d32f2f;
+    border-width: 2px;
+}
+/* Hide server errors by default - they'll be shown via show class */
+#mobile-error-server,
+#aadhaar-error-server,
+#email-error-server,
+#password-error-server,
+#confirm_password-error-server {
+    display: none;
+}
+</style>
+
+
+
+
+<div class="home-box">
+
+<form method="POST">
+{% csrf_token %}
+
+<h2 class="form-title">STUDENT REGISTRATION</h2>
+
+<h3>PERSONAL DETAILS</h3>
+
+<div class="field-wrapper">
+    <input type="text" name="name" id="name" placeholder="Full Name"
+           value="{{ form_data.name }}" required>
+    <div class="error-message" id="name-error"></div>
+    {% if errors.name %}<div class="error-message show" id="name-error-server">{{ errors.name }}</div>{% endif %}
+</div>
+
+<div class="field-wrapper">
+    <input type="email" name="email" id="email" placeholder="Email"
+           value="{{ form_data.email|default:'' }}" required>
+
+    {% if errors.email %}
+        <div class="error-message show">
+            {{ errors.email }}
+        </div>
+    {% endif %}
+</div>
+
+<input type="date" name="dob"
+       value="{{ form_data.dob }}" required>
+
+<select name="gender" required>
+    <option value="">Gender</option>
+    <option value="Male" {% if form_data.gender == "Male" %}selected{% endif %}>Male</option>
+    <option value="Female" {% if form_data.gender == "Female" %}selected{% endif %}>Female</option>
+    <option value="Other" {% if form_data.gender == "Other" %}selected{% endif %}>Other</option>
+</select>
+
+<div class="field-wrapper">
+    <input type="text" name="mobile" id="mobile" placeholder="Mobile Number"
+           value="{{ form_data.mobile }}" required maxlength="10">
+    <div class="error-message" id="mobile-error"></div>
+    {% if errors.mobile %}<div class="error-message show" id="mobile-error-server">{{ errors.mobile }}</div>{% endif %}
+</div>
+
+<div class="field-wrapper">
+    <input type="text" name="aadhaar" id="aadhaar" placeholder="Aadhaar Number"
+           value="{{ form_data.aadhaar }}" required maxlength="12">
+    <div class="error-message" id="aadhaar-error"></div>
+    {% if errors.aadhaar %}<div class="error-message show" id="aadhaar-error-server">{{ errors.aadhaar }}</div>{% endif %}
+</div>
+
+<textarea name="house_name" placeholder="House Name / House No" required>{{ form_data.house_name }}</textarea>
+
+<input type="text" id="pin_code" name="pin_code" placeholder="Pin Code" required maxlength="6">
+
+<input type="text" id="place" name="place" placeholder="Place" readonly>
+
+<input type="text" id="district" name="district" placeholder="District" readonly>
+
+<input type="text" id="state" name="state" placeholder="State" readonly>
+
+<h3>COURSE DETAILS</h3>
+
+<select name="program" id="program" required>
+<option value="">Stream</option>
+
+<option value="BTech">BTech</option>
+<option value="BCA(Hons)">BCA (Hons.)</option>
+<option value="BBA(Hons)">BBA (Hons.)</option>
+<option value="BArch">BArch</option>
+
+<option value="MTech">MTech</option>
+<option value="MCA">MCA</option>
+<option value="MBA">MBA</option>
+<option value="MArch">MArch</option>
+
+</select>
+
+<select name="year" id="year" required>
+    <option value="">Year</option>
+</select>
+
+<select name="branch" id="branch" required>
+    <option value="">Branch</option>
+</select>
+
+<h3>COLLEGE NAME</h3>
+
+<select name="institution" id="institution" required>
+    <option value="">Select College</option>
+</select>
+
+<h3>PASSWORD</h3>
+
+<div class="field-wrapper">
+<input type="password" name="password" id="password" placeholder="Password" required>
+
+<div class="password-rules">
+
+<p id="rule-length">❌ Minimum 8 characters</p>
+<p id="rule-capital">❌ At least 1 capital letter</p>
+<p id="rule-number">❌ At least 1 number</p>
+<p id="rule-special">❌ At least 1 special character</p>
+
+</div>
+
+<div class="error-message" id="password-error"></div>
+{% if errors.password %}
+<div class="error-message show" id="password-error-server">{{ errors.password }}</div>
+{% endif %}
+
+</div>
+
+
+<div class="field-wrapper">
+<input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm Password" required>
+
+<div class="error-message" id="confirm_password-error"></div>
+{% if errors.confirm_password %}
+<div class="error-message show" id="confirm_password-error-server">{{ errors.confirm_password }}</div>
+{% endif %}
+
+</div>
+<div class="checkbox-row">
+    <input type="checkbox" required>
+    <span>I hereby confirm that all the given information are correct.</span>
+</div>
+
+<button type="submit" class="register-btn">Submit</button>
+
+</form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Helper function to hide server-side errors when user starts typing
+    function hideServerError(fieldId) {
+        const serverError = document.getElementById(fieldId + '-server');
+        if (serverError) {
+            serverError.classList.remove('show');
+        }
+    }
+    
+    // Mobile number validation
+    const mobileInput = document.getElementById('mobile');
+    const mobileError = document.getElementById('mobile-error');
+    
+    function validateMobile() {
+        const value = mobileInput.value.trim();
+        if (value && (!/^\d{10}$/.test(value))) {
+            mobileError.textContent = 'Mobile number must be exactly 10 digits';
+            mobileError.classList.add('show');
+            mobileInput.classList.add('error');
+            return false;
+        } else {
+            mobileError.classList.remove('show');
+            mobileInput.classList.remove('error');
+            hideServerError('mobile-error');
+            return true;
+        }
+    }
+    
+    mobileInput.addEventListener('blur', validateMobile);
+    mobileInput.addEventListener('input', function() {
+        // Only allow digits
+        this.value = this.value.replace(/\D/g, '');
+        // Clear error immediately when user corrects it
+        if (this.classList.contains('error')) {
+            validateMobile();
+        }
+        hideServerError('mobile-error');
+    });
+    
+    // Aadhaar number validation
+    const aadhaarInput = document.getElementById('aadhaar');
+    const aadhaarError = document.getElementById('aadhaar-error');
+    
+    function validateAadhaar() {
+        const value = aadhaarInput.value.trim();
+        if (value && (!/^\d{12}$/.test(value))) {
+            aadhaarError.textContent = 'Aadhaar number must be exactly 12 digits';
+            aadhaarError.classList.add('show');
+            aadhaarInput.classList.add('error');
+            return false;
+        } else {
+            aadhaarError.classList.remove('show');
+            aadhaarInput.classList.remove('error');
+            hideServerError('aadhaar-error');
+            return true;
+        }
+    }
+    
+    aadhaarInput.addEventListener('blur', validateAadhaar);
+    aadhaarInput.addEventListener('input', function() {
+        // Only allow digits
+        this.value = this.value.replace(/\D/g, '');
+        // Clear error immediately when user corrects it
+        if (this.classList.contains('error')) {
+            validateAadhaar();
+        }
+        hideServerError('aadhaar-error');
+    });
+    
+    // Password confirmation validation
+    const passwordInput = document.getElementById('password');
+    const passwordError = document.getElementById('password-error');
+    const confirmPasswordInput = document.getElementById('confirm_password');
+    const confirmPasswordError = document.getElementById('confirm_password-error');
+    
+    function validatePassword() {
+    const password = passwordInput.value.trim();
+
+    const strongPassword = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+
+    if (!strongPassword.test(password)) {
+
+        passwordError.textContent =
+        "Password must contain at least 8 characters, 1 capital letter, 1 number, and 1 special character.";
+
+        passwordError.classList.add("show");
+        passwordInput.classList.add("error");
+        return false;
+
+    } else {
+
+        passwordError.classList.remove("show");
+        passwordInput.classList.remove("error");
+        hideServerError("password-error");
+        return true;
+
+    }
+}
+
+passwordInput.addEventListener("blur", validatePassword);
+
+passwordInput.addEventListener("input", function () {
+
+    if (this.classList.contains("error")) {
+        validatePassword();
+    }
+
+
+});
+
+
+    function validatePasswordMatch() {
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+        
+        if (confirmPassword && password !== confirmPassword) {
+            confirmPasswordError.textContent = 'Passwords do not match';
+            confirmPasswordError.classList.add('show');
+            confirmPasswordInput.classList.add('error');
+            return false;
+        } else {
+            confirmPasswordError.classList.remove('show');
+            confirmPasswordInput.classList.remove('error');
+            hideServerError('confirm_password-error');
+            return true;
+        }
+    }
+    
+    confirmPasswordInput.addEventListener('blur', validatePasswordMatch);
+    confirmPasswordInput.addEventListener('input', function() {
+        // Clear error immediately when user corrects it
+        if (this.classList.contains('error')) {
+            validatePasswordMatch();
+        }
+        hideServerError('confirm_password-error');
+    });
+    
+    passwordInput.addEventListener('blur', function() {
+        if (confirmPasswordInput.value) {
+            validatePasswordMatch();
+        }
+    });
+    
+    passwordInput.addEventListener('input', function() {
+        if (confirmPasswordInput.value && confirmPasswordInput.classList.contains('error')) {
+            validatePasswordMatch();
+        }
+        hideServerError('password-error');
+    });
+    
+    // Email validation (basic)
+    const emailInput = document.getElementById('email');
+    const emailError = document.getElementById('email-error');
+    
+    function validateEmail() {
+        const value = emailInput.value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (value && !emailRegex.test(value)) {
+            emailError.textContent = 'Please enter a valid email address';
+            emailError.classList.add('show');
+            emailInput.classList.add('error');
+            return false;
+        } else {
+            emailError.classList.remove('show');
+            emailInput.classList.remove('error');
+            hideServerError('email-error');
+            return true;
+        }
+    }
+    
+    emailInput.addEventListener('blur', validateEmail);
+    emailInput.addEventListener('input', function() {
+        // Clear error immediately when user corrects it
+        if (this.classList.contains('error')) {
+            validateEmail();
+        }
+        hideServerError('email-error');
+    });
+    // PASSWORD RULE CHECK
+const ruleLength = document.getElementById("rule-length");
+const ruleCapital = document.getElementById("rule-capital");
+const ruleNumber = document.getElementById("rule-number");
+const ruleSpecial = document.getElementById("rule-special");
+
+passwordInput.addEventListener("input", function(){
+
+let password = this.value;
+
+if(password.length >= 8){
+ruleLength.textContent="✔ Minimum 8 characters";
+ruleLength.classList.add("valid");
+}else{
+ruleLength.textContent="❌ Minimum 8 characters";
+ruleLength.classList.remove("valid");
+}
+
+if(/[A-Z]/.test(password)){
+ruleCapital.textContent="✔ At least 1 capital letter";
+ruleCapital.classList.add("valid");
+}else{
+ruleCapital.textContent="❌ At least 1 capital letter";
+ruleCapital.classList.remove("valid");
+}
+
+if(/[0-9]/.test(password)){
+ruleNumber.textContent="✔ At least 1 number";
+ruleNumber.classList.add("valid");
+}else{
+ruleNumber.textContent="❌ At least 1 number";
+ruleNumber.classList.remove("valid");
+}
+
+if(/[@$!%*?&]/.test(password)){
+ruleSpecial.textContent="✔ At least 1 special character";
+ruleSpecial.classList.add("valid");
+}else{
+ruleSpecial.textContent="❌ At least 1 special character";
+ruleSpecial.classList.remove("valid");
+}
+
+});
+
+});
+</script>
+
+<script>
+
+const pincodeInput = document.getElementById("pin_code");
+
+pincodeInput.addEventListener("blur", function(){
+
+let pincode = this.value;
+
+if(pincode.length === 6){
+
+fetch("https://api.postalpincode.in/pincode/" + pincode)
+
+.then(response => response.json())
+
+.then(data => {
+
+if(data[0].Status === "Success"){
+
+let postOffice = data[0].PostOffice[0];
+
+document.getElementById("place").value = postOffice.Name;
+document.getElementById("place").value = postOffice.Name;
+document.getElementById("district").value = postOffice.District;
+document.getElementById("state").value = postOffice.State;
+
+}else{
+
+alert("Invalid PIN Code");
+
+}
+
+});
+
+}
+
+});
+
+</script>
+
+<script>
+
+const ktuCourses = {
+
+BTech:{
+duration:4,
+branches:{
+"Computer Science and Engineering":[
+"ACE College of Engineering, Thiruvananthapuram",
+"Adi Shankara Institute of Engineering and Technology, Kalady",
+"Albertian Institute of Science and Technology (AISAT), Kochi",
+"Amal Jyothi College of Engineering, Kanjirappally",
+"AWH Engineering College, Kozhikode",
+"Bishop Jerome Institute, Kollam",
+"College of Engineering, Adoor",
+"College of Engineering, Attingal",
+"College of Engineering, Chengannur",
+"College of Engineering, Karunagappally",
+"College of Engineering, Kidangoor",
+"College of Engineering, Munnar",
+"College of Engineering, Pathanapuram",
+"College of Engineering, Perumon",
+"College of Engineering, Trivandrum",
+"Federal Institute of Science and Technology (FISAT), Angamaly",
+"Government Engineering College, Barton Hill",
+"Government Engineering College, Idukki",
+"Government Engineering College, Kannur",
+"Government Engineering College, Thrissur",
+"Government Engineering College, Wayanad",
+"Ilahia College of Engineering and Technology, Muvattupuzha",
+"Jawaharlal College of Engineering and Technology, Palakkad",
+"Jyothi Engineering College, Thrissur",
+"KMEA Engineering College, Aluva",
+"KMCT College of Engineering, Kozhikode",
+"LBS College of Engineering, Kasaragod",
+"LBS Institute of Technology for Women, Thiruvananthapuram",
+"Lourdes Matha College of Science and Technology, Thiruvananthapuram",
+"Mangalam College of Engineering, Kottayam",
+"Mar Athanasius College of Engineering, Kothamangalam",
+"Mar Baselios College of Engineering and Technology, Thiruvananthapuram",
+"Mar Baselios Institute of Technology and Science, Nellimattom",
+"Marian Engineering College, Thiruvananthapuram",
+"MEA Engineering College, Perinthalmanna",
+"MES College of Engineering, Kuttippuram",
+"Model Engineering College, Kochi",
+"Muthoot Institute of Technology and Science, Kochi",
+"Nehru College of Engineering and Research Centre, Pampady",
+"NSS College of Engineering, Palakkad",
+"Rajadhani Institute of Engineering and Technology, Attingal",
+"Rajagiri School of Engineering and Technology, Kochi",
+"Royal College of Engineering and Technology, Thrissur",
+"Sahrdaya College of Engineering and Technology, Thrissur",
+"Saintgits College of Engineering, Kottayam",
+"SCMS School of Engineering and Technology, Kochi",
+"St Thomas College of Engineering and Technology, Kannur",
+"TKM College of Engineering, Kollam",
+"Vidya Academy of Science and Technology, Thrissur",
+"Viswajyothi College of Engineering and Technology, Vazhakulam"
+],
+
+"Information Technology":[
+"ACE College of Engineering, Thiruvananthapuram",
+"Adi Shankara Institute of Engineering and Technology, Kalady",
+"Albertian Institute of Science and Technology, Kochi",
+"Amal Jyothi College of Engineering, Kanjirappally",
+"AWH Engineering College, Kozhikode",
+"College of Engineering, Adoor",
+"College of Engineering, Attingal",
+"College of Engineering, Chengannur",
+"College of Engineering, Karunagappally",
+"College of Engineering, Kallooppara",
+"College of Engineering, Kidangoor",
+"College of Engineering, Munnar",
+"College of Engineering, Pathanapuram",
+"College of Engineering, Perumon",
+"College of Engineering, Trivandrum",
+"Federal Institute of Science and Technology (FISAT), Angamaly",
+"Government Engineering College, Barton Hill",
+"Government Engineering College, Idukki",
+"Government Engineering College, Kannur",
+"Government Engineering College, Thrissur",
+"Government Engineering College, Wayanad",
+"Ilahia College of Engineering and Technology, Muvattupuzha",
+"Jawaharlal College of Engineering and Technology, Palakkad",
+"Jyothi Engineering College, Thrissur",
+"KMEA Engineering College, Aluva",
+"KMCT College of Engineering, Kozhikode",
+"LBS College of Engineering, Kasaragod",
+"LBS Institute of Technology for Women, Thiruvananthapuram",
+"Lourdes Matha College of Science and Technology, Thiruvananthapuram",
+"Mangalam College of Engineering, Kottayam",
+"Mar Athanasius College of Engineering, Kothamangalam",
+"Mar Baselios College of Engineering and Technology, Thiruvananthapuram",
+"Mar Baselios Institute of Technology and Science, Nellimattom",
+"Marian Engineering College, Thiruvananthapuram",
+"MEA Engineering College, Perinthalmanna",
+"MES College of Engineering, Kuttippuram",
+"Model Engineering College, Kochi",
+"Muthoot Institute of Technology and Science, Kochi",
+"Nehru College of Engineering and Research Centre, Pampady",
+"NSS College of Engineering, Palakkad",
+"Rajadhani Institute of Engineering and Technology, Attingal",
+"Rajagiri School of Engineering and Technology, Kochi",
+"Royal College of Engineering and Technology, Thrissur",
+"Sahrdaya College of Engineering and Technology, Thrissur",
+"Saintgits College of Engineering, Kottayam",
+"SCMS School of Engineering and Technology, Kochi",
+"St Thomas College of Engineering and Technology, Kannur",
+"TKM College of Engineering, Kollam",
+"Vidya Academy of Science and Technology, Thrissur",
+"Viswajyothi College of Engineering and Technology, Vazhakulam"
+],
+
+"Electronics and Communication Engineering":[
+"ACE College of Engineering Trivandrum",
+"Adi Shankara Institute of Engineering and Technology",
+"Amal Jyothi College of Engineering",
+"AWH Engineering College",
+"College of Engineering Adoor",
+"College of Engineering Attingal",
+"College of Engineering Chengannur",
+"College of Engineering Kallooppara",
+"College of Engineering Muttathara",
+"College of Engineering Thalassery",
+"College of Engineering Trivandrum",
+"College of Engineering Vadakara",
+"Federal Institute of Science and Technology",
+"Government Engineering College Barton Hill",
+"Government Engineering College Idukki",
+"Government Engineering College Kannur",
+"Government Engineering College Kozhikode",
+"Government Engineering College Thrissur",
+"Government Engineering College Wayanad",
+"Ilahia College of Engineering and Technology",
+"Jawaharlal College of Engineering and Technology",
+"Jyothi Engineering College",
+"KMEA Engineering College",
+"KMCT College of Engineering",
+"LBS College of Engineering Kasaragod",
+"LBS Institute of Technology for Women Trivandrum",
+"Lourdes Matha College of Science and Technology",
+"Mangalam College of Engineering",
+"Mar Baselios College of Engineering and Technology",
+"Mar Baselios Institute of Technology and Science",
+"Marian Engineering College",
+"MEA Engineering College",
+"MES College of Engineering Kuttippuram",
+"Model Engineering College Kochi",
+"Muthoot Institute of Technology and Science",
+"Nehru College of Engineering and Research Centre",
+"NSS College of Engineering Palakkad",
+"Rajadhani Institute of Engineering and Technology",
+"Rajagiri School of Engineering and Technology",
+"Royal College of Engineering and Technology",
+"Sahrdaya College of Engineering and Technology",
+"Saintgits College of Engineering",
+"SCMS School of Engineering and Technology",
+"St Thomas College of Engineering and Technology Kannur",
+"TKM College of Engineering Kollam",
+"Toc H Institute of Science and Technology",
+"Vidya Academy of Science and Technology",
+"Vimal Jyothi Engineering College",
+"Viswajyothi College of Engineering and Technology",
+"Younus College of Engineering and Technology"
+],
+
+"Electrical and Electronics Engineering":[
+"ACE College of Engineering Trivandrum",
+"Adi Shankara Institute of Engineering and Technology",
+"Amal Jyothi College of Engineering",
+"AWH Engineering College",
+"College of Engineering Adoor",
+"College of Engineering Attingal",
+"College of Engineering Chengannur",
+"College of Engineering Kallooppara",
+"College of Engineering Muttathara",
+"College of Engineering Thalassery",
+"College of Engineering Trivandrum",
+"College of Engineering Vadakara",
+"Federal Institute of Science and Technology",
+"Government Engineering College Barton Hill",
+"Government Engineering College Idukki",
+"Government Engineering College Kannur",
+"Government Engineering College Kozhikode",
+"Government Engineering College Thrissur",
+"Government Engineering College Wayanad",
+"Ilahia College of Engineering and Technology",
+"Jawaharlal College of Engineering and Technology",
+"Jyothi Engineering College",
+"KMEA Engineering College",
+"KMCT College of Engineering",
+"LBS College of Engineering Kasaragod",
+"LBS Institute of Technology for Women Trivandrum",
+"Lourdes Matha College of Science and Technology",
+"Mangalam College of Engineering",
+"Mar Baselios College of Engineering and Technology",
+"Mar Baselios Institute of Technology and Science",
+"Marian Engineering College",
+"MEA Engineering College",
+"MES College of Engineering Kuttippuram",
+"Model Engineering College Kochi",
+"Muthoot Institute of Technology and Science",
+"Nehru College of Engineering and Research Centre",
+"NSS College of Engineering Palakkad",
+"Rajadhani Institute of Engineering and Technology",
+"Rajagiri School of Engineering and Technology",
+"Royal College of Engineering and Technology",
+"Sahrdaya College of Engineering and Technology",
+"Saintgits College of Engineering",
+"SCMS School of Engineering and Technology",
+"St Thomas College of Engineering and Technology Kannur",
+"TKM College of Engineering Kollam",
+"Toc H Institute of Science and Technology",
+"Vidya Academy of Science and Technology",
+"Vimal Jyothi Engineering College",
+"Viswajyothi College of Engineering and Technology",
+"Younus College of Engineering and Technology"
+],
+
+"Mechanical Engineering":[
+"ACE College of Engineering, Thiruvananthapuram",
+"Adi Shankara Institute of Engineering and Technology, Kalady",
+"Albertian Institute of Science and Technology (AISAT), Kochi",
+"Amal Jyothi College of Engineering, Kanjirappally",
+"AWH Engineering College, Kozhikode",
+"College of Engineering, Adoor",
+"College of Engineering, Attingal",
+"College of Engineering, Chengannur",
+"College of Engineering, Karunagappally",
+"College of Engineering, Kidangoor",
+"College of Engineering, Munnar",
+"College of Engineering, Pathanapuram",
+"College of Engineering, Perumon",
+"College of Engineering, Trivandrum",
+"Federal Institute of Science and Technology (FISAT), Angamaly",
+"Government Engineering College, Barton Hill",
+"Government Engineering College, Idukki",
+"Government Engineering College, Kannur",
+"Government Engineering College, Kozhikode",
+"Government Engineering College, Thrissur",
+"Government Engineering College, Wayanad",
+"Ilahia College of Engineering and Technology, Muvattupuzha",
+"Jawaharlal College of Engineering and Technology, Palakkad",
+"Jyothi Engineering College, Thrissur",
+"KMEA Engineering College, Aluva",
+"KMCT College of Engineering, Kozhikode",
+"LBS College of Engineering, Kasaragod",
+"Lourdes Matha College of Science and Technology, Thiruvananthapuram",
+"Mangalam College of Engineering, Kottayam",
+"Mar Athanasius College of Engineering, Kothamangalam",
+"Mar Baselios College of Engineering and Technology, Thiruvananthapuram",
+"Mar Baselios Institute of Technology and Science, Nellimattom",
+"Marian Engineering College, Thiruvananthapuram",
+"MEA Engineering College, Perinthalmanna",
+"MES College of Engineering, Kuttippuram",
+"Model Engineering College, Kochi",
+"Muthoot Institute of Technology and Science, Kochi",
+"Nehru College of Engineering and Research Centre, Pampady",
+"NSS College of Engineering, Palakkad",
+"Rajadhani Institute of Engineering and Technology, Attingal",
+"Rajagiri School of Engineering and Technology, Kochi",
+"Royal College of Engineering and Technology, Thrissur",
+"Sahrdaya College of Engineering and Technology, Thrissur",
+"Saintgits College of Engineering, Kottayam",
+"SCMS School of Engineering and Technology, Kochi",
+"St Thomas College of Engineering and Technology, Kannur",
+"TKM College of Engineering, Kollam",
+"Toc H Institute of Science and Technology, Arakunnam",
+"Vidya Academy of Science and Technology, Thrissur",
+"Viswajyothi College of Engineering and Technology, Vazhakulam"
+],
+
+"Civil Engineering":[
+"ACE College of Engineering, Thiruvananthapuram",
+"Adi Shankara Institute of Engineering and Technology, Kalady",
+"Albertian Institute of Science and Technology (AISAT), Kochi",
+"Amal Jyothi College of Engineering, Kanjirappally",
+"AWH Engineering College, Kozhikode",
+"Bishop Jerome Institute, Kollam",
+"College of Engineering, Adoor",
+"College of Engineering, Attingal",
+"College of Engineering, Chengannur",
+"College of Engineering, Karunagappally",
+"College of Engineering, Kidangoor",
+"College of Engineering, Munnar",
+"College of Engineering, Pathanapuram",
+"College of Engineering, Perumon",
+"College of Engineering, Trivandrum",
+"Federal Institute of Science and Technology (FISAT), Angamaly",
+"Government Engineering College, Barton Hill",
+"Government Engineering College, Idukki",
+"Government Engineering College, Kannur",
+"Government Engineering College, Kozhikode",
+"Government Engineering College, Thrissur",
+"Government Engineering College, Wayanad",
+"Ilahia College of Engineering and Technology, Muvattupuzha",
+"Jawaharlal College of Engineering and Technology, Palakkad",
+"Jyothi Engineering College, Thrissur",
+"KMEA Engineering College, Aluva",
+"KMCT College of Engineering, Kozhikode",
+"LBS College of Engineering, Kasaragod",
+"Lourdes Matha College of Science and Technology, Thiruvananthapuram",
+"Mangalam College of Engineering, Kottayam",
+"Mar Athanasius College of Engineering, Kothamangalam",
+"Mar Baselios College of Engineering and Technology, Thiruvananthapuram",
+"Mar Baselios Institute of Technology and Science, Nellimattom",
+"Marian Engineering College, Thiruvananthapuram",
+"MEA Engineering College, Perinthalmanna",
+"MES College of Engineering, Kuttippuram",
+"Model Engineering College, Kochi",
+"Muthoot Institute of Technology and Science, Kochi",
+"Nehru College of Engineering and Research Centre, Pampady",
+"NSS College of Engineering, Palakkad",
+"Rajadhani Institute of Engineering and Technology, Attingal",
+"Rajagiri School of Engineering and Technology, Kochi",
+"Royal College of Engineering and Technology, Thrissur",
+"Sahrdaya College of Engineering and Technology, Thrissur",
+"Saintgits College of Engineering, Kottayam",
+"SCMS School of Engineering and Technology, Kochi",
+"St Thomas College of Engineering and Technology, Kannur",
+"TKM College of Engineering, Kollam",
+"Toc H Institute of Science and Technology, Arakunnam",
+"Vidya Academy of Science and Technology, Thrissur",
+"Viswajyothi College of Engineering and Technology, Vazhakulam"
+]
+
+}
+},
+
+
+"BCA(Hons)":{
+duration:4,
+branches:{
+"Computer Applications":[
+"KMCT Institute of Technology and Management, Kuttippuram",
+"KMCT College of Engineering for Emerging Technology, Kozhikode",
+"Jai Bharath College of Management and Engineering Technology, Perumbavoor",
+"Rajagiri School of Engineering and Technology, Kochi",
+"Saintgits College of Engineering, Kottayam",
+"Amal Jyothi College of Engineering, Kanjirappally",
+"Ilahia College of Engineering and Technology, Muvattupuzha",
+"Muthoot Institute of Technology and Science, Kochi",
+"SCMS School of Engineering and Technology, Kochi",
+"Federal Institute of Science and Technology (FISAT), Angamaly",
+"Adi Shankara Institute of Engineering and Technology, Kalady",
+"Jyothi Engineering College, Thrissur",
+"Vidya Academy of Science and Technology, Thrissur",
+"Sahrdaya College of Engineering and Technology, Thrissur",
+"Rajadhani Institute of Engineering and Technology, Attingal",
+"Lourdes Matha College of Science and Technology, Thiruvananthapuram",
+"Mar Baselios College of Engineering and Technology, Thiruvananthapuram",
+"Marian Engineering College, Thiruvananthapuram",
+"TKM College of Engineering, Kollam",
+"NSS College of Engineering, Palakkad"
+]
+}
+},
+
+"BBA(Hons)":{
+duration:4,
+branches:{
+"Business Administration":[
+"KMCT Institute of Technology and Management, Mukkam",
+"KMCT College of Engineering and Management, Kuttippuram",
+"KMCT Institute of Emerging Technology and Management, Kozhikode",
+"KMCT College of Technology and Management, Malappuram",
+"KMCT College of Engineering and Management, Kasaragod",
+"MEA Engineering College, Perinthalmanna",
+"Jai Bharath College of Management and Engineering Technology, Perumbavoor",
+"Rajagiri School of Engineering and Technology, Kochi",
+"Saintgits College of Engineering, Kottayam",
+"Amal Jyothi College of Engineering, Kanjirappally",
+"Ilahia College of Engineering and Technology, Muvattupuzha",
+"Muthoot Institute of Technology and Science, Kochi",
+"SCMS School of Engineering and Technology, Kochi",
+"Federal Institute of Science and Technology, Angamaly",
+"Adi Shankara Institute of Engineering and Technology, Kalady",
+"Jyothi Engineering College, Thrissur",
+"Vidya Academy of Science and Technology, Thrissur",
+"Sahrdaya College of Engineering and Technology, Thrissur",
+"Rajadhani Institute of Engineering and Technology, Attingal",
+"Lourdes Matha College of Science and Technology, Thiruvananthapuram",
+"Mar Baselios College of Engineering and Technology, Thiruvananthapuram",
+"Marian Engineering College, Thiruvananthapuram",
+"TKM College of Engineering, Kollam",
+"NSS College of Engineering, Palakkad",
+"Viswajyothi College of Engineering and Technology, Vazhakulam"
+]
+}
+},
+
+BArch:{
+duration:5,
+branches:{
+"Architecture":[
+"Asian School of Architecture and Design, Kochi",
+"College of Engineering Trivandrum",
+"GKM College of Architecture, Alappuzha",
+"Government Engineering College Thrissur",
+"Holy Crescent School of Architecture, Alwaye",
+"LBS College of Engineering, Kasaragod",
+"Mar Athanasius College of Engineering, Kothamangalam",
+"MES School of Architecture, Kuttippuram",
+"Rajiv Gandhi Institute of Technology, Kottayam",
+"School of Architecture, TKM College of Engineering, Kollam"
+]
+}
+},
+
+MTech:{
+duration:2,
+branches:{
+
+"Computer Science and Engineering":[
+"College of Engineering Trivandrum",
+"Government Engineering College Thrissur",
+"Rajiv Gandhi Institute of Technology Kottayam",
+"Model Engineering College Kochi",
+"TKM College of Engineering Kollam",
+"NSS College of Engineering Palakkad",
+"LBS College of Engineering Kasaragod",
+"Rajagiri School of Engineering and Technology",
+"SCMS School of Engineering and Technology",
+"Saintgits College of Engineering",
+"Mar Athanasius College of Engineering Kothamangalam"
+],
+
+"VLSI Design":[
+"College of Engineering Trivandrum",
+"Government Engineering College Thrissur",
+"Model Engineering College Kochi",
+"TKM College of Engineering Kollam",
+"Rajiv Gandhi Institute of Technology Kottayam",
+"LBS College of Engineering Kasaragod",
+"Rajagiri School of Engineering and Technology",
+"SCMS School of Engineering and Technology"
+],
+
+"Embedded Systems":[
+"College of Engineering Trivandrum",
+"Government Engineering College Thrissur",
+"Model Engineering College Kochi",
+"TKM College of Engineering Kollam",
+"Rajiv Gandhi Institute of Technology Kottayam"
+],
+
+"Communication Engineering":[
+"College of Engineering Trivandrum",
+"Government Engineering College Thrissur",
+"TKM College of Engineering Kollam",
+"Rajiv Gandhi Institute of Technology Kottayam",
+"LBS College of Engineering Kasaragod"
+],
+
+"Power Systems":[
+"College of Engineering Trivandrum",
+"Government Engineering College Thrissur",
+"NSS College of Engineering Palakkad",
+"TKM College of Engineering Kollam",
+"Rajiv Gandhi Institute of Technology Kottayam",
+"LBS College of Engineering Kasaragod"
+],
+
+"Power Electronics and Drives":[
+"College of Engineering Trivandrum",
+"Government Engineering College Thrissur",
+"NSS College of Engineering Palakkad",
+"Rajiv Gandhi Institute of Technology Kottayam",
+"LBS College of Engineering Kasaragod"
+],
+
+"Structural Engineering":[
+"College of Engineering Trivandrum",
+"Government Engineering College Thrissur",
+"TKM College of Engineering Kollam",
+"NSS College of Engineering Palakkad",
+"Rajiv Gandhi Institute of Technology Kottayam",
+"Mar Athanasius College of Engineering Kothamangalam"
+],
+
+"Geotechnical Engineering":[
+"College of Engineering Trivandrum",
+"Government Engineering College Thrissur",
+"TKM College of Engineering Kollam",
+"NSS College of Engineering Palakkad"
+],
+
+"Transportation Engineering":[
+"College of Engineering Trivandrum",
+"Government Engineering College Thrissur",
+"Rajiv Gandhi Institute of Technology Kottayam"
+],
+
+"Environmental Engineering":[
+"College of Engineering Trivandrum",
+"Government Engineering College Thrissur",
+"NSS College of Engineering Palakkad",
+"Rajiv Gandhi Institute of Technology Kottayam"
+],
+
+"Thermal Engineering":[
+"College of Engineering Trivandrum",
+"Government Engineering College Thrissur",
+"NSS College of Engineering Palakkad",
+"TKM College of Engineering Kollam",
+"Rajiv Gandhi Institute of Technology Kottayam"
+],
+
+"Machine Design":[
+"College of Engineering Trivandrum",
+"Government Engineering College Thrissur",
+"NSS College of Engineering Palakkad",
+"Rajiv Gandhi Institute of Technology Kottayam"
+],
+
+"Industrial Engineering":[
+"Government Engineering College Thrissur",
+"NSS College of Engineering Palakkad"
+]
+
+}
+},
+
+MCA:{
+duration:2,
+branches:{
+"MCA":[
+"College of Engineering Trivandrum",
+"Model Engineering College Kochi",
+"Rajagiri School of Engineering and Technology Kochi",
+"SCMS School of Engineering and Technology Karukutty",
+"Rajiv Gandhi Institute of Technology Kottayam",
+"TKM College of Engineering Kollam",
+"Saintgits College of Engineering Kottayam",
+"Amal Jyothi College of Engineering Kanjirappally",
+"Mar Athanasius College of Engineering Kothamangalam",
+"NSS College of Engineering Palakkad",
+"LBS College of Engineering Kasaragod",
+"Ilahia College of Engineering and Technology Muvattupuzha",
+"Mount Zion College of Engineering Pathanamthitta",
+"Musaliar College of Engineering Pathanamthitta",
+"College of Engineering Adoor"
+]
+}
+},
+
+MBA:{
+duration:2,
+branches:{
+
+"Finance":[
+"CET School of Management Trivandrum",
+"Rajagiri Business School Kochi",
+"SCMS School of Technology and Management Kochi",
+"TKM Institute of Management Kollam",
+"Rajiv Gandhi Institute of Technology Kottayam",
+"Saintgits Institute of Management Kottayam",
+"Amal Jyothi School of Management Kanjirappally",
+"Ilahia School of Management Muvattupuzha",
+"NSS Institute of Management Palakkad",
+"Mar Athanasius Institute of Management Kothamangalam"
+],
+
+"Marketing":[
+"CET School of Management Trivandrum",
+"Rajagiri Business School Kochi",
+"SCMS School of Technology and Management Kochi",
+"TKM Institute of Management Kollam",
+"Rajiv Gandhi Institute of Technology Kottayam",
+"Saintgits Institute of Management Kottayam",
+"Amal Jyothi School of Management Kanjirappally",
+"Ilahia School of Management Muvattupuzha",
+"NSS Institute of Management Palakkad",
+"Mar Athanasius Institute of Management Kothamangalam"
+],
+
+"Human Resource Management":[
+"CET School of Management Trivandrum",
+"Rajagiri Business School Kochi",
+"SCMS School of Technology and Management Kochi",
+"TKM Institute of Management Kollam",
+"Saintgits Institute of Management Kottayam",
+"Amal Jyothi School of Management Kanjirappally"
+],
+
+"Operations Management":[
+"CET School of Management Trivandrum",
+"Rajagiri Business School Kochi",
+"SCMS School of Technology and Management Kochi",
+"TKM Institute of Management Kollam"
+]
+
+}
+},
+
+MArch:{
+duration:2,
+branches:{
+"Urban Design":[
+"College of Engineering Trivandrum"
+],
+"Sustainable Architecture":[
+"TKM College of Engineering Kollam"
+],
+
+"Landscape Architecture":[
+"College of Engineering Trivandrum"
+]
+}
+}
+
+
+};
+
+const program=document.getElementById("program");
+const year=document.getElementById("year");
+const branch=document.getElementById("branch");
+const college=document.getElementById("institution");
+
+program.addEventListener("change",function(){
+
+let course=this.value;
+
+year.innerHTML='<option value="">Year</option>';
+branch.innerHTML='<option value="">Branch</option>';
+college.innerHTML='<option value="">Select College</option>';
+
+if(!course) return;
+
+let duration=ktuCourses[course].duration;
+
+for(let i=1;i<=duration;i++){
+year.innerHTML+=`<option value="${i}">${i}</option>`;
+}
+
+let branches=ktuCourses[course].branches;
+
+for(let b in branches){
+branch.innerHTML+=`<option value="${b}">${b}</option>`;
+}
+
+});
+
+branch.addEventListener("change",function(){
+
+let course=program.value;
+let b=this.value;
+
+college.innerHTML='<option value="">Select College</option>';
+
+if(!course || !b) return;
+
+let colleges=ktuCourses[course].branches[b];
+
+colleges.forEach(function(c){
+college.innerHTML+=`<option value="${c}">${c}</option>`;
+});
+
+});
+
+</script>
+{% endblock %}

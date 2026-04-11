@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>UGVS</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+</head>
+<body>
+
+<div class="navbar">
+
+    <!-- LEFT SIDE TITLE -->
+    <div class="nav-left">
+        UNIVERSITY GRIEVANCE VOTING SYSTEM
+    </div>
+
+    <!-- RIGHT SIDE LINKS -->
+    <div class="nav-right">
+    <a href="/">Home</a>
+    <a href="/about/">About Us</a>
+    <!--<a href="{% url 'feedback' %}">Feedback</a>-->
+
+    {% if user.is_authenticated %}
+        <a href="{% url 'profile' %}">Profile</a>
+        <a href="#" onclick="openLogoutModal(); return false;">Logout</a>
+    {% else %}
+        <a href="{% url 'login' %}">Login</a>
+        <a href="{% url 'register' %}">Register</a>
+    {% endif %}
+</div>
+
+
+</div>
+
+<div class="container">
+    {% block content %}
+    {% endblock %}
+</div>
+
+
+
+<div id="logoutModal" class="logout-modal">
+    <div class="logout-box">
+        <h3>Confirm Logout</h3>
+        <p>Are you sure you want to logout?</p>
+
+        <div class="logout-buttons">
+            <a href="{% url 'logout' %}">
+                <button>Yes</button>
+            </a>
+
+            <button onclick="closeLogoutModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+function openLogoutModal(){
+    document.getElementById("logoutModal").style.display = "flex";
+}
+
+function closeLogoutModal(){
+    document.getElementById("logoutModal").style.display = "none";
+}
+</script>
+
+</body>
+</html>

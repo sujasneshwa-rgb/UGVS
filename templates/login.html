@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="homee-box">
+    <div class="login-card">
+        <h2 class="login-title">Login</h2>
+
+        <form method="POST" class="login-form">
+            {% csrf_token %}
+
+            {% if messages %}
+                {% for message in messages %}
+                    <p class="error-message">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+
+            <input type="email" name="email" placeholder="Email" class="login-input">
+            <input type="password" name="password" placeholder="Password" class="login-input">
+
+            <a href="/password-reset/" class="forgot-link">Forgot Password?</a>
+
+            <button type="submit" class="register-btn">Login</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
